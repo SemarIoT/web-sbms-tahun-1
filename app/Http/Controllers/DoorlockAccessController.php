@@ -77,6 +77,12 @@ class DoorlockAccessController extends Controller
 
         return redirect('doorlock_list');
     }
+    public function reject_doorlockAccess($id){
+		$data = DoorlockAccess::findorfail($id);
+		$data->delete();
+
+        return redirect('doorlock_list');
+	}
     public function storemandiri_doorlockAccess(Request $request){
        
         request()->validate(

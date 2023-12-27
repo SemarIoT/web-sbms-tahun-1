@@ -47,22 +47,23 @@ class EnergyController extends Controller
    
     }
 
-    // public function energyStat(){
+    public function energyStat(){
 
-    //     $cost_energy = Energy::select(Energy::raw('year(created_at) as year'),
-    //                     Energy::raw('month(created_at) as month'),
-    //                     Energy::raw('sum(active_power) as stat'))->groupBy('year')->groupBy('month')->pluck('stat');
-    //     $waktu = Energy::select(Energy::raw('month(created_at) AS waktu'))->pluck('waktu');
+        $cost_energy = Energy::select(Energy::raw('year(created_at) as year'),
+                        Energy::raw('month(created_at) as month'),
+                        Energy::raw('sum(active_power) as stat'))->groupBy('year')->groupBy('month')->pluck('stat');
+        $waktu = Energy::select(Energy::raw('month(created_at) AS waktu'))->pluck('waktu');
         
-    //     $cost_energy2 = Energy::select(Energy::raw('year(created_at) as year2'),
-    //                     Energy::raw('month(created_at) as month2'),
-    //                     Energy::raw('day(created_at) as day2'),
-    //                     Energy::raw('sum(active_power) as stat2'))->groupBy('year2')->groupBy('month2')->groupBy('day2')->pluck('stat2');
-    //     $waktu2 = Energy::select(Energy::raw('Day(created_at) AS waktu2'))->pluck('waktu2');
+        $cost_energy2 = Energy::select(Energy::raw('year(created_at) as year2'),
+                        Energy::raw('month(created_at) as month2'),
+                        Energy::raw('day(created_at) as day2'),
+                        Energy::raw('sum(active_power) as stat2'))->groupBy('year2')->groupBy('month2')->groupBy('day2')->pluck('stat2');
+        $waktu2 = Energy::select(Energy::raw('Day(created_at) AS waktu2'))->pluck('waktu2');
         
 
-    //     return view('energy.statistic',compact('cost_energy','waktu','cost_energy2','waktu2'));
-    // }
+        return view('energy.statistic',compact('cost_energy','waktu','cost_energy2','waktu2'));
+    }
+    
     public function energyCost(){
         $price = DB::select('SELECT month(energies.created_at)as month,year(energies.created_at)as tahun,SUM(energies.active_power*(energy_costs.delay/3600)) AS result,SUM(energies.active_power*energy_costs.harga) AS harga FROM energies JOIN energy_costs WHERE id_kwh = 1 GROUP BY month(energies.created_at) DESC,year(energies.created_at) DESC');
         

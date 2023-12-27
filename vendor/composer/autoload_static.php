@@ -333,8 +333,8 @@ class ComposerStaticInit1f629ff95ce77d41028fcb8fe6fdcb33
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -588,6 +588,8 @@ class ComposerStaticInit1f629ff95ce77d41028fcb8fe6fdcb33
         'App\\Http\\Middleware\\TrustHosts' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustHosts.php',
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
+        'App\\Http\\Requests\\StoreEnergyKwhRequest' => __DIR__ . '/../..' . '/app/Http/Requests/StoreEnergyKwhRequest.php',
+        'App\\Http\\Requests\\UpdateEnergyKwhRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateEnergyKwhRequest.php',
         'App\\Models\\About' => __DIR__ . '/../..' . '/app/Models/About.php',
         'App\\Models\\ApiData' => __DIR__ . '/../..' . '/app/Models/ApiData.php',
         'App\\Models\\Camera' => __DIR__ . '/../..' . '/app/Models/Camera.php',
@@ -600,6 +602,7 @@ class ComposerStaticInit1f629ff95ce77d41028fcb8fe6fdcb33
         'App\\Models\\DoorlockState' => __DIR__ . '/../..' . '/app/Models/DoorlockState.php',
         'App\\Models\\Energy' => __DIR__ . '/../..' . '/app/Models/Energy.php',
         'App\\Models\\EnergyCost' => __DIR__ . '/../..' . '/app/Models/EnergyCost.php',
+        'App\\Models\\EnergyKwh' => __DIR__ . '/../..' . '/app/Models/EnergyKwh.php',
         'App\\Models\\EnergyOutlet' => __DIR__ . '/../..' . '/app/Models/EnergyOutlet.php',
         'App\\Models\\EnergyOutletMaster' => __DIR__ . '/../..' . '/app/Models/EnergyOutletMaster.php',
         'App\\Models\\EnergyPanel' => __DIR__ . '/../..' . '/app/Models/EnergyPanel.php',
@@ -614,6 +617,7 @@ class ComposerStaticInit1f629ff95ce77d41028fcb8fe6fdcb33
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\kontrol' => __DIR__ . '/../..' . '/app/Models/kontrol.php',
         'App\\Models\\plc_sipil' => __DIR__ . '/../..' . '/app/Models/plc_sipil.php',
+        'App\\Policies\\EnergyKwhPolicy' => __DIR__ . '/../..' . '/app/Policies/EnergyKwhPolicy.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
@@ -751,6 +755,7 @@ class ComposerStaticInit1f629ff95ce77d41028fcb8fe6fdcb33
         'Database\\Seeders\\DashboardSettingSeeder' => __DIR__ . '/../..' . '/database/seeders/DashboardSettingSeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\EnergyCostSeeder' => __DIR__ . '/../..' . '/database/seeders/EnergyCostSeeder.php',
+        'Database\\Seeders\\EnergyKwhSeeder' => __DIR__ . '/../..' . '/database/seeders/EnergyKwhSeeder.php',
         'Database\\Seeders\\EnergyOutletMasterSeeder' => __DIR__ . '/../..' . '/database/seeders/EnergyOutletMasterSeeder.php',
         'Database\\Seeders\\EnergyOutletSeeder' => __DIR__ . '/../..' . '/database/seeders/EnergyOutletSeeder.php',
         'Database\\Seeders\\EnergyPanelMasterSeeder' => __DIR__ . '/../..' . '/database/seeders/EnergyPanelMasterSeeder.php',

@@ -20,11 +20,6 @@
                     <div class="card">
                         <div class="card-body">
                           <h3>List of Permission to Door Access</h3>
-                          
-                            <div class="d-flex align-items-end justify-content-between pt-2 pb-2">
-                                
-                                </div>
-                        
                             @if ($message = Session::get('succes'))
                             <div class="alert alert-success">
                                 <p>{{ $message }}</p>
@@ -37,7 +32,7 @@
                                     <th class="text-center">Nama</th>
                                     <th class="text-center">Token</th>
                                     <th class="text-center">Level</th>
-                                    <th class="text-center" width="140px">Action</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                                 @foreach ($doorlockaccessvalidate as $doorlockaccessvalidates)
                                 <tr>
@@ -46,7 +41,8 @@
                                     <td class="text-center">{{ $doorlockaccessvalidates->token }}</td>
                                     <td class="text-center">{{ $doorlockaccessvalidates->level_akses }}</td>
                                     <td class="text-center">
-                                            <a class="btn btn-success btn-sm" href="validate_doorlockAccess/{{$doorlockaccessvalidates->id}}">Setujui</a>
+                                        <a class="btn btn-success btn-sm" href="validate_doorlockAccess/{{$doorlockaccessvalidates->id}}">Setujui</a>
+                                        <a class="btn btn-danger btn-sm" href="reject_doorlockAccess/{{$doorlockaccessvalidates->id}}">Tolak</a>
                                     </td>
                                 </tr>
                                 @endforeach

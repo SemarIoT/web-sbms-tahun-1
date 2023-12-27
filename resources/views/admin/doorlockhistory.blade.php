@@ -3,7 +3,6 @@
 @extends('layout.topbar')
 @section('content')
 @if (Auth::user()->level == 'Admin' || Auth::user()->level == 'Developer')
-  
 <div class="page-content">
     <!-- Page Header-->
     <div class="bg-dash-dark-1 py-4">
@@ -20,17 +19,13 @@
                     <div class="card">
                         <div class="card-body">
                           <h3>History</h3>
-                          
                             <div class="d-flex align-items-end justify-content-between pt-2 pb-2">
-                                
-                                </div>
-                        
+                            </div>
                             @if ($message = Session::get('succes'))
                             <div class="alert alert-success">
                                 <p>{{ $message }}</p>
                             </div>
                             @endif
-                        
                             <table class="table table-bordered">
                                 <tr>
                                     <th class="text-center">No</th>

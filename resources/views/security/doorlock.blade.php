@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="vendor/choices.js/public/assets/styles/choices.min.css">
     <!-- Google fonts - Muli-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,700">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
@@ -36,14 +37,11 @@
                     <p class="fw-light mb-0">Masukkan Token Anda</p>
                     <a class="btn btn-primary btn-sm" href="createmandiri_doorlockAccess">Tidak Punya Token? Daftar Disini</a>
                   </div>
-                  
                 </div>
               </div>
               <!-- Form Panel    -->
               <div class="col-lg-6 bg-white">
                 <div class="d-flex align-items-center px-4 px-lg-5 h-100 bg-dash-dark-2">
-
-                  
                   <form class="login-form py-5 w-100" action="{{url('proses_token_doorlock_iot')}}" method="POST">
                     {{ csrf_field() }}
                     @error('login_gagal')
@@ -55,9 +53,9 @@
                           <input class="input-material" 
                                 id="inputEmailAddress"
                                 name="username"
-                                type="text"
+                                type="password"
                                 >
-                          <label class="label-material"for="inputEmailAddress">Token</label>
+                          <label class="label-material"for="password" type="password">Token</label>
                     </div>
                     
                     <button class="btn btn-primary mb-3" id="login" type="submit">Buka Pintu</button>
@@ -77,32 +75,6 @@
     <script src="vendor/choices.js/public/assets/scripts/choices.min.js"></script>
     <!-- Main File-->
     <script src="js/front.js"></script>
-    <script>
-      // ------------------------------------------------------- //
-      //   Inject SVG Sprite - 
-      //   see more here 
-      //   https://css-tricks.com/ajaxing-svg-sprite/
-      // ------------------------------------------------------ //
-      function injectSvgSprite(path) {
-      
-          var ajax = new XMLHttpRequest();
-          ajax.open("GET", path, true);
-          ajax.send();
-          ajax.onload = function(e) {
-          var div = document.createElement("div");
-          div.className = 'd-none';
-          div.innerHTML = ajax.responseText;
-          document.body.insertBefore(div, document.body.childNodes[0]);
-          }
-      }
-      // this is set to BootstrapTemple website as you cannot 
-      // inject local SVG sprite (using only 'icons/orion-svg-sprite.svg' path)
-      // while using file:// protocol
-      // pls don't forget to change to your domain :)
-      injectSvgSprite('https://bootstraptemple.com/files/icons/orion-svg-sprite.svg'); 
-      
-      
-    </script>
     <!-- FontAwesome CSS - loading as last, so it doesn't block rendering-->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   </body>

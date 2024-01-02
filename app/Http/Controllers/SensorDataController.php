@@ -104,10 +104,16 @@ class SensorDataController extends Controller
     }
     public function getAllData()
     {
-        // get all data
-        // $data = Energy::latest()->get();//->toJson(JSON_PRETTY_PRINT);
-        $data = Energy::latest()->take(3000)->get(); //Biar gak memory warning sama hostingnya;
-        return response($data, 200);
+        $data = Energy::latest()->take(500)->get(); //Biar gak memory warning sama hostingnya;
+        //  Format the created_at timestamp
+        $formattedData = $data->map(function ($item) {
+            $item->created_at_formatted = $item->created_at->format('d M Y H:i:s');
+            return $item;
+        });
+
+        // Hide the created_at and updated_at fields
+        $formattedData->makeHidden(['created_at', 'updated_at']);
+        return response($formattedData, 200);
     }
 
     public function addData(Request $request)
@@ -224,6 +230,25 @@ class SensorDataController extends Controller
                 "message" => "Failed to add data record"
             ], 500); // You can use a different HTTP status code based on your application's needs
         }
+    }
+
+    public function getDailyEnergy()
+    {
+        $data = EnergyKwh::selectRaw('id_kwh, DATE(created_at) as date, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
+            ->groupBy('id_kwh', 'date')
+            ->latest('latest_updated')
+            ->get();
+
+        $length = count($data);
+
+        for ($i = 0; $i < $length - 1; $i++) {
+            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i + 1]->energy_meter;
+        }
+
+        // Remove the last item from the collection since there is no next day for the last day
+        $data->pop();
+
+        return $data;
     }
 
     public function getData($id)

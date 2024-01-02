@@ -234,7 +234,8 @@ class SensorDataController extends Controller
 
     public function getDailyEnergy()
     {
-        $data = EnergyKwh::selectRaw('id_kwh, DATE(created_at) as date, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
+        $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
+            ->where('id_kwh','=','1')    
             ->groupBy('id_kwh', 'date')
             ->latest('latest_updated')
             ->get();

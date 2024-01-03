@@ -44,19 +44,15 @@
                     <th class="text-center">Energi (KWH)</th>
                     <th class="text-center" width="40px"></th>
                     <th class="text-center">Total</th>
-
-
                   </tr>
-                  @foreach ($price as $prices)
+                  @foreach ($data as $item)
                   <tr>
                     <td class="text-center">{{++$i}}</td>
-                    <td class="text-center">{{$prices->month}}</td>
-                    <td class="text-center">{{$prices->tahun}}</td>
-                    <td class="text-center">@php echo number_format((float)$prices->result,2,'.',''); @endphp</td>
-                    <td class="text-end">Rp.</td>
-                    <td class="text-end">@php echo number_format($prices->harga); @endphp</td>
-
-
+                    <td class="text-center">{{$item->month}}</td>
+                    <td class="text-center">{{$item->tahun}}</td>
+                    <td class="text-center">@php echo number_format((float)$item->monthly_kwh,2,',',''); @endphp</td>
+                    <td class="text-end">Rp </td>
+                    <td class="text-end">@php echo number_format((float)$item->bill,'0',',','.'); @endphp</td>
                   </tr>
                   @endforeach
                 </table>
@@ -119,7 +115,7 @@
 
     $.getJSON("api/daily-energy", function (data) {
       for (var i = 0; i < data.length; i++) {
-        dataPoints.push({ x: new Date(data[i].date), y: Number((data[i].today_energy)/1000) });
+        dataPoints.push({ x: new Date(data[i].date), y: Number((data[i].today_energy) / 1000) });
       }
       stockChart.render();
     });

@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
-use App\Models\Energy;
-use App\Models\EnergyCost;
-use App\Models\EnergyOutlet;
-use App\Models\EnergyOutletMaster;
-use App\Models\EnergyPanel;
-use App\Models\EnergyPanelMaster;
-use App\Models\About;
 use DB;
-use App\Exports\EnergyExport;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Controllers\Controller;
+use App\Models\About;
 use App\Models\Driver;
+use App\Models\Energy;
+use App\Models\EnergyKwh;
+use App\Models\EnergyCost;
+use App\Models\EnergyPanel;
+use App\Models\EnergyOutlet;
+use Illuminate\Http\Request;
+use App\Exports\EnergyExport;
+use Illuminate\Support\Carbon;
+use App\Models\EnergyPanelMaster;
+use App\Models\EnergyOutletMaster;
+use Illuminate\Support\Collection;
+use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EnergyController extends Controller
 {
@@ -65,9 +66,30 @@ class EnergyController extends Controller
     }
     
     public function energyCost(){
-        $price = DB::select('SELECT month(energies.created_at)as month,year(energies.created_at)as tahun,SUM(energies.active_power*(energy_costs.delay/3600)) AS result,SUM(energies.active_power*energy_costs.harga) AS harga FROM energies JOIN energy_costs WHERE id_kwh = 1 GROUP BY month(energies.created_at) DESC,year(energies.created_at) DESC');
+        // $price = DB::select('SELECT month(energies.created_at)as month,year(energies.created_at)as tahun,SUM(energies.active_power*(energy_costs.delay/3600)) AS result,SUM(energies.active_power*energy_costs.harga) AS harga FROM energies JOIN energy_costs WHERE id_kwh = 1 GROUP BY month(energies.created_at) DESC,year(energies.created_at) DESC');
         
-        return view('energy.cost',compact('price'))->with('i', (request()->input('page', 1) -1) * 5);
+        // Versi Mario
+        // Menggunakan jumlah energy langsung dari kWh meter
+        $data = EnergyKwh::selectRaw('MONTH(created_at) as month, YEAR(created_at) as tahun, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
+            ->where('id_kwh','=','1')    
+            ->groupBy('month', 'tahun')
+            ->latest('latest_updated')
+            ->get();
+        
+        $price = EnergyCost::latest()->first()->pokok;
+
+        $length = count($data);
+        
+        for ($i = 0; $i < $length - 1; $i++) {
+            $data[$i]->monthly_kwh = ($data[$i]->energy_meter - $data[$i + 1]->energy_meter)/1000; // energy perbulan dalam kWh
+            $data[$i]->bill = intval($data[$i]->monthly_kwh * $price); // biaya listrik perbulan
+        }
+        
+        // Remove the last item from the collection since there is no next day for the last day
+        $data->pop();
+
+        // return view('energy.cost',compact('price'))->with('i', (request()->input('page', 1) -1) * 5);
+        return view('energy.cost',compact('data'))->with('i', (request()->input('page', 1) -1) * 5);
     }
 
     //panel list

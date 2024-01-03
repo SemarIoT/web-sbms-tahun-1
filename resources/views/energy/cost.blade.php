@@ -106,7 +106,7 @@
         data: [{
           type: "area",
           name: "Energi",
-          yValueFormatString: "##,###.##KWH",
+          yValueFormatString: "##,##0.## KWH",
           dataPoints: dataPoints
         }]
       }],
@@ -117,9 +117,9 @@
       }
     });
 
-    $.getJSON("api/statistic", function (data) {
+    $.getJSON("api/daily-energy", function (data) {
       for (var i = 0; i < data.length; i++) {
-        dataPoints.push({ x: new Date(data[i].date), y: Number(data[i].energy) });
+        dataPoints.push({ x: new Date(data[i].date), y: Number((data[i].today_energy)/1000) });
       }
       stockChart.render();
     });

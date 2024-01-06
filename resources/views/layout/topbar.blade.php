@@ -87,6 +87,7 @@
                   @endif
                  <!-- <li><a class="sidebar-link" href="{{url('statistic')}}">Statistic</a></li> -->
                   <li><a class="sidebar-link" href="{{url('cost')}}">Statistic</a></li>
+                  <li><a class="sidebar-link" href="{{url('standar-ike')}}">Standar IKE</a></li>
                 </ul>
               </li>
               <li class="sidebar-item"><a class="sidebar-link" href="#securitydropdown" data-bs-toggle="collapse"> 

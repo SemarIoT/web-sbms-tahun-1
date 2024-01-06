@@ -82,6 +82,8 @@ Route::get('/control-change-status-panel/{id}', [EnergyOutletController::class, 
 Route::get('/control-change-status-outlet/{id}', [EnergyOutletController::class, 'changeOutlet']);
 Route::get('/energyexportxlxs', [EnergyController::class, 'export_excel']);
 Route::get('/energyexportcsv', [EnergyController::class, 'export_excel_csv']);
+Route::get('/standar-ike', [EnergyController::class, 'standarIke']); // tambahan mario
+
 //digunakan untuk mengatur hal hal yang berkaitan dengan halaman sensor suhu dan kelembaban
 Route::resource('/temperature', \App\Http\Controllers\DhtSensorTemperatureController::class);
 Route::resource('/humidity', \App\Http\Controllers\DhtSensorHumidityController::class);

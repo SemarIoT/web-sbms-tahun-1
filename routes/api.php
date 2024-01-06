@@ -55,6 +55,8 @@ Route::get('total-energy', [SensorDataController::class, 'getTotalEnergy']);
 Route::post('total-energy', [SensorDataController::class, 'addTotalEnergy']);
 Route::post('debug-energy', [SensorDataController::class, 'addDebugEnergy']);
 Route::get('daily-energy', [SensorDataController::class, 'getDailyEnergy']);
+Route::get('monthly-energy', [SensorDataController::class, 'getMonthlyEnergy']);
+Route::get('ike-dummy', [SensorDataController::class, 'getIkeDummy']);
 
 
 //api control energy

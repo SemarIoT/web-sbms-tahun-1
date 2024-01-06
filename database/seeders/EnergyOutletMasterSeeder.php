@@ -19,7 +19,6 @@ class EnergyOutletMasterSeeder extends Seeder
                 [
                     'nama' => 'master',
                     'status' => '0'
-                   
                 ],
                 
             ];

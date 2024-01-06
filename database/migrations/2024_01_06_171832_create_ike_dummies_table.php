@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLightDimmersTable extends Migration
+class CreateIkeDummiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class CreateLightDimmersTable extends Migration
      */
     public function up()
     {
-        Schema::create('light_dimmers', function (Blueprint $table) {
+        Schema::create('ike_dummies', function (Blueprint $table) {
             $table->id();
-            $table->integer('nilai');
-            $table->string('nama');
-            $table->integer('status');
+            $table->integer('total_energy');
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ class CreateLightDimmersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('light_dimmers');
+        Schema::dropIfExists('ike_dummies');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use App\Models\Light;
 use App\Models\Energy;
+use App\Models\IkeDummy;
 use App\Models\Pinpoint;
 use App\Models\DhtSensor;
 use App\Models\EnergyKwh;
@@ -271,6 +272,7 @@ class SensorDataController extends Controller
             $data[$i]->monthly_kwh = ($data[$i]->energy_meter - $data[$i + 1]->energy_meter) / 1000; // energy perbulan dalam kWh
             $data[$i]->bill = intval($data[$i]->monthly_kwh * $price); // biaya listrik perbulan
             $angka_ike = $data[$i]->monthly_kwh / 33.1;
+            $data[$i]->angka_ike = $angka_ike;
             switch ($angka_ike) {
                 case $angka_ike <= 7.92:
                     $ike = 'Sangat Efisien';
@@ -304,21 +306,23 @@ class SensorDataController extends Controller
         // Remove the last item from the collection since there is no next day for the last day
         $data->pop();
 
-        // $data->makeHidden(['energy_meter']);
+        $data->makeHidden(['energy_meter']);
 
         return $data;
     }
 
     public function getIkeDummy()
     {
-        $data = DB::select('SELECT month(energies.created_at)as month,year(energies.created_at)as tahun,SUM(energies.active_power*(energy_costs.delay/3600)) AS monthly_kwh,SUM(energies.active_power*energy_costs.harga) AS bill FROM energies JOIN energy_costs WHERE id_kwh = 1 GROUP BY month(energies.created_at) DESC, year(energies.created_at) DESC');
+        $data = IkeDummy::selectRaw('MONTH(created_at) as month, YEAR(created_at) as tahun, MAX(created_at) as latest_updated, MAX(total_energy) as monthly_kwh')
+        ->groupBy('month', 'tahun')
+        ->latest('latest_updated')
+        ->get();
 
         // return $data;
         $length = count($data);
-        // $data[$length-1]->monthly_kwh = ($data[$length-1]->energy_meter - 6950)/1000; // pertama kali pasang di 30 des dengan kwh meter start dari 6950
 
         for ($i = 0; $i < $length; $i++) {
-            $angka_ike = $data[$i]->monthly_kwh / 33.1;
+            $angka_ike = number_format($data[$i]->monthly_kwh / 33.1, 2);
             $data[$i]->angka_ike = $angka_ike;
             switch ($angka_ike) {
                 case $angka_ike <= 7.92:
@@ -349,12 +353,51 @@ class SensorDataController extends Controller
             $data[$i]->ike = $ike;
             $data[$i]->color = $color;
         }
+        return $data;
+    }
 
-        // Remove the last item from the collection since there is no next day for the last day
-        // $data->pop();
+    public function getIkeDummyAnnual()
+    {
+        $data = IkeDummy::selectRaw('YEAR(created_at) as tahun, MAX(created_at) as latest_updated, SUM(total_energy) as annual_kwh')
+        ->groupBy('tahun')
+        ->latest('latest_updated')
+        ->get();
 
-        // $data->makeHidden(['energy_meter']);
+        // return $data;
+        $length = count($data);
 
+        for ($i = 0; $i < $length; $i++) {
+            $angka_ike = number_format($data[$i]->annual_kwh / 33.1, 2);
+            $data[$i]->angka_ike = $angka_ike;
+            switch ($angka_ike) {
+                case $angka_ike <= 95:
+                    $ike = 'Sangat Efisien';
+                    $color = '#00ff00';
+                    break;
+                case $angka_ike > 95 && $angka_ike <= 145:
+                    $ike = 'Efisien';
+                    $color = '#009900';
+                    break;
+                case $angka_ike > 145 && $angka_ike <= 175:
+                    $ike = 'Cukup Efisien';
+                    $color = '#ffff00';
+                    break;
+                case $angka_ike > 175 && $angka_ike <= 285:
+                    $ike = 'Agak Boros';
+                    $color = '#ff9900';
+                    break;
+                case $angka_ike > 285 && $angka_ike <= 450:
+                    $ike = 'Boros';
+                    $color = '#ff3300';
+                    break;
+                default:
+                    $ike = 'Sangat Boros';
+                    $color = '#800000';
+                    break;
+            }
+            $data[$i]->ike = $ike;
+            $data[$i]->color = $color;
+        }
         return $data;
     }
 

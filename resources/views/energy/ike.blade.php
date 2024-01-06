@@ -14,6 +14,11 @@
                     <!-- Sales bar chart-->
                     <div class="card">
                         <div class="card-body">
+                            <div id="daily-ike" style="height: 300px; width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-body">
                             <div id="monthly-ike" style="height: 300px; width: 100%;"></div>
                         </div>
                     </div>
@@ -29,11 +34,31 @@
 </div>
 <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.stock.min.js"></script>
 
 <script type="text/javascript">
     window.onload = function () {
+        var dailyData = [];
         var monthlyData = [];
         var annualData = [];
+
+        // Fetch Daily Data
+        var dailyApiSource = "api/daily-energy";
+        $.getJSON("api/daily-energy", function (data) {
+            for (var i = 0; i < data.length; i++) {
+                dailyData.push({
+                    x: new Date(data[i].date),
+                    y: Number((data[i].today_energy) / 1000),
+                    indexLabel: data[i].ike,
+                    indexLabelFontColor: data[i].color,
+                    indexLabelFontSize: 14,
+                    indexLabelFontWeight: "bolder",
+                    indexLabelMaxWidth: 50,
+                    color: data[i].color
+                });
+            }
+            renderDailyChart();
+        });
 
         // Fetch Monthly Data
         // var monthlyApiSource = "api/monthly-energy";
@@ -82,6 +107,72 @@
             }
             renderAnnualChart();
         });
+
+        function renderDailyChart() {
+            var dailyChart = new CanvasJS.StockChart("daily-ike", {
+                theme: "dark2", //"light1", "dark1", "dark2" "light2",
+                exportEnabled: true,
+                exportFileName: "Chart IKE Lab IoT",
+                backgroundColor: "#2d3035",
+                title: {
+                    text: "Standar IKE per Hari"
+                },
+                charts: [{
+                    axisX: {
+                        valueFormatString: "DD MMM YYYY",
+                        interval: 1,
+                        intervalType: "day",
+                    },
+                    axisY: {
+                        title: "Total Energi (kWh)",
+                        prefix: "",
+                        valueFormatString: "##,###.##",
+                    },
+                    toolTip: {
+                        shared: true
+                    },
+                    data: [{
+                        type: "line",
+                        dataPoints: dailyData,
+                        name: "Total Energy",
+                        yValueFormatString: "##,##0.## KWH",
+                    }]
+                }],
+                navigator: {
+                    enabled: false,
+                    slider: {
+                    }
+                }
+            });
+            // var dailyChart = new CanvasJS.Chart("daily-ike", {
+            //     theme: "dark2",
+            //     exportFileName: "Chart IKE Lab IoT",
+            //     exportEnabled: true,
+            //     backgroundColor: "#2d3035",
+            //     title: {
+            //         text: "Standar IKE per Hari"
+            //     },
+            //     axisX: {
+            //         valueFormatString: "DD MMM YYYY",
+            //         interval: 1,
+            //         intervalType: "day"
+            //     },
+            //     axisY: {
+            //         title: "Total Energi (kWh)",
+            //         prefix: "",
+            //         valueFormatString: "##,###.##"
+            //     },
+            //     data: [
+            //         {
+            //             type: "area",
+            //             dataPoints: dailyData,
+            //             yValueFormatString: "##,##0.## KWH",
+            //         }
+            //     ]
+            // });
+
+            dailyChart.render();
+        }
 
         function renderMonthlyChart() {
             var monthlyChart = new CanvasJS.Chart("monthly-ike", {

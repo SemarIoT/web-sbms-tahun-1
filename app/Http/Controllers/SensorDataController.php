@@ -246,6 +246,36 @@ class SensorDataController extends Controller
 
         for ($i = 0; $i < $length - 1; $i++) {
             $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i + 1]->energy_meter;
+            $angka_ike = number_format($data[$i]->today_energy * 30 / 1000 / 33.1, 2); // dikali 30 agar memakai standar perbulan
+            $data[$i]->angka_ike = $angka_ike;
+            switch ($angka_ike) {
+                case $angka_ike <= 7.92:
+                    $ike = 'Sangat Efisien';
+                    $color = '#00ff00';
+                    break;
+                case $angka_ike > 7.92 && $angka_ike <= 12.08:
+                    $ike = 'Efisien';
+                    $color = '#009900';
+                    break;
+                case $angka_ike > 12.08 && $angka_ike <= 14.58:
+                    $ike = 'Cukup Efisien';
+                    $color = '#ffff00';
+                    break;
+                case $angka_ike > 14.58 && $angka_ike <= 19.17:
+                    $ike = 'Agak Boros';
+                    $color = '#ff9900';
+                    break;
+                case $angka_ike > 19.17 && $angka_ike <= 23.75:
+                    $ike = 'Boros';
+                    $color = '#ff3300';
+                    break;
+                default:
+                    $ike = 'Sangat Boros';
+                    $color = '#800000';
+                    break;
+            }
+            $data[$i]->ike = $ike;
+            $data[$i]->color = $color;
         }
 
         // Remove the last item from the collection since there is no next day for the last day

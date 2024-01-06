@@ -64,12 +64,12 @@
         var annualApiSource = "api/ike-dummy-annual";
         $.getJSON(annualApiSource, function (data) {
             for (var i = 0; i < data.length; i++) {
-                var formattedDate = new Date(data[i].tahun, 11, 1).toLocaleDateString('en-US', {
+                var formattedDate = new Date(data[i].tahun, 0, 1).toLocaleDateString('en-US', {
                     year: 'numeric'
                 });
 
                 annualData.push({
-                    x: new Date(data[i].tahun, 11, 30), // Use 0 for the month (January)
+                    x: new Date(data[i].tahun, 0, 1), // Use 0 for the month (January)
                     y: Number(data[i].annual_kwh),
                     label: formattedDate,
                     indexLabel: data[i].ike,
@@ -93,7 +93,9 @@
                     text: "Standar IKE per Bulan"
                 },
                 axisX: {
-                    valueFormatString: "MMM YYYY" // Format for the x-axis labels
+                    valueFormatString: "MMM YYYY",
+                    interval: 1, // Format for the x-axis labels
+                    intervalType: "month"
                 },
                 axisY: {
                     title: "Total Energi (kWh)",
@@ -122,6 +124,8 @@
                     text: "Standar IKE per Tahun"
                 },
                 axisX: {
+                    interval: 1, // Format for the x-axis labels
+                    intervalType: "year",
                     valueFormatString: "YYYY" // Format for the x-axis labels
                 },
                 axisY: {

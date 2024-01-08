@@ -144,33 +144,6 @@
                     }
                 }
             });
-            // var dailyChart = new CanvasJS.Chart("daily-ike", {
-            //     theme: "dark2",
-            //     exportFileName: "Chart IKE Lab IoT",
-            //     exportEnabled: true,
-            //     backgroundColor: "#2d3035",
-            //     title: {
-            //         text: "Standar IKE per Hari"
-            //     },
-            //     axisX: {
-            //         valueFormatString: "DD MMM YYYY",
-            //         interval: 1,
-            //         intervalType: "day"
-            //     },
-            //     axisY: {
-            //         title: "Total Energi (kWh)",
-            //         prefix: "",
-            //         valueFormatString: "##,###.##"
-            //     },
-            //     data: [
-            //         {
-            //             type: "area",
-            //             dataPoints: dailyData,
-            //             yValueFormatString: "##,##0.## KWH",
-            //         }
-            //     ]
-            // });
-
             dailyChart.render();
         }
 

@@ -29,8 +29,7 @@ class LightSeeder extends Seeder
             [
                 'nama'=>'D4',
                 'status' => '0',
-            ],
-            
+            ],  
         ];
 
         foreach ($user as $key => $value) {

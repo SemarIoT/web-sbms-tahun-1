@@ -11,7 +11,6 @@
       </div>
     </div>
   <div class="container-fluid">
-
             <section class="pt-3 mt-3">
                 <div class="col-lg-12">
                     <div class="card">
@@ -23,7 +22,6 @@
                             </a>
                           </div>
                       <div class="card-body pt-0">
-                        
                             @foreach($editlightdimmer as $editlightdimmers)
                             <form class="form-horizontal" id="formEditUser" name="formEditUser" method="POST" action="{{ route('updateLightDimmerList') }}">
                                 {{ csrf_field() }}

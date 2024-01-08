@@ -15,7 +15,9 @@ class CreateEnergyCostsTable extends Migration
     {
         Schema::create('energy_costs', function (Blueprint $table) {
             $table->id();
-            $table->float('harga');
+            $table->integer('harga');
+            $table->integer('pokok');
+            $table->integer('delay');
             $table->timestamps();
         });
     }

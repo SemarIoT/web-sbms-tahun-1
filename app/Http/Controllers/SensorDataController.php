@@ -118,6 +118,36 @@ class SensorDataController extends Controller
         return response($formattedData, 200);
     }
 
+    public function getData($id)
+    {
+        // get data at id = $id
+        if (Energy::where('id_kwh', $id)->exists()) {
+            $data = Energy::where('id_kwh', $id)->get(); //()->toJson(JSON_PRETTY_PRINT);
+            return response($data, 200);
+        } else {
+            return response()->json([
+                "message" => "Data not found"
+            ], 404);
+        }
+    }
+
+    public function deleteData($id)
+    {
+        // delete data at id = $id
+        if (Energy::where('id', $id)->exists()) {
+            $data = Energy::find($id);
+            $data->delete();
+
+            return response()->json([
+                "message" => "Data's records deleted"
+            ], 202);
+        } else {
+            return response()->json([
+                "message" => "Data not found"
+            ], 404);
+        }
+    }
+
     public function addData(Request $request)
     {
         // Validasi agar data tersimpan setiap 5 menit sekali saja
@@ -172,6 +202,21 @@ class SensorDataController extends Controller
         ], 201);
     }
 
+    public function getTotalEnergy()
+    {
+        $data = EnergyKwh::latest()->get();
+        //  Format the created_at timestamp
+        $formattedData = $data->map(function ($item) {
+            $item->created_at_formatted = $item->created_at->format('d M Y H:i:s');
+            return $item;
+        });
+
+        // Hide the created_at and updated_at fields
+        $formattedData->makeHidden(['created_at', 'updated_at']);
+
+        return $formattedData;
+    }
+   
     public function addTotalEnergy(Request $request)
     {
         // Validasi agar data tersimpan setiap 5 menit sekali saja
@@ -246,7 +291,7 @@ class SensorDataController extends Controller
 
         for ($i = 0; $i < $length - 1; $i++) {
             $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i + 1]->energy_meter;
-            $angka_ike = number_format($data[$i]->today_energy * 30 / 1000 / 33.1, 2); // dikali 30 agar memakai standar perbulan
+            $angka_ike = number_format($data[$i]->today_energy * 30 / 1000 / 33.1, 2); // dikali 30 agar memakai standar perbulan | 33,1 luas ruangan IoT
             $data[$i]->angka_ike = $angka_ike;
             switch ($angka_ike) {
                 case $angka_ike <= 7.92:
@@ -429,51 +474,6 @@ class SensorDataController extends Controller
             $data[$i]->color = $color;
         }
         return $data;
-    }
-
-    public function getData($id)
-    {
-        // get data at id = $id
-        if (Energy::where('id_kwh', $id)->exists()) {
-            $data = Energy::where('id_kwh', $id)->get(); //()->toJson(JSON_PRETTY_PRINT);
-            return response($data, 200);
-        } else {
-            return response()->json([
-                "message" => "Data not found"
-            ], 404);
-        }
-    }
-
-    public function getTotalEnergy()
-    {
-        $data = EnergyKwh::latest()->get();
-        //  Format the created_at timestamp
-        $formattedData = $data->map(function ($item) {
-            $item->created_at_formatted = $item->created_at->format('d M Y H:i:s');
-            return $item;
-        });
-
-        // Hide the created_at and updated_at fields
-        $formattedData->makeHidden(['created_at', 'updated_at']);
-
-        return $formattedData;
-    }
-
-    public function deleteData($id)
-    {
-        // delete data at id = $id
-        if (Energy::where('id', $id)->exists()) {
-            $data = Energy::find($id);
-            $data->delete();
-
-            return response()->json([
-                "message" => "Data's records deleted"
-            ], 202);
-        } else {
-            return response()->json([
-                "message" => "Data not found"
-            ], 404);
-        }
     }
 
     public function getAllFireAlarm()

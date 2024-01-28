@@ -3,32 +3,49 @@
 namespace App\Exports;
 
 use DB;
-use App\Models\Energy;
 use App\Models\Driver;
-use Maatwebsite\Excel\Concerns\WithHeadings;    
+use App\Models\Energy;
+use App\Models\EnergyKwh;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class EnergyExport implements FromCollection,WithHeadings
+class EnergyExport implements FromCollection, WithHeadings
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function headings() :array
+     * @return \Illuminate\Support\Collection
+     */
+    public function headings(): array
     {
-        return [ "date","total energy"];
+        return ["date", "energy wh"];
     }
     public function collection()
     {
-        // return Energy::select(Energy::raw('DATE(created_at) as date'), energy::raw('SUM(active_power) as sale'))->
-        // where('id_kwh', '=', 1)->
-        // groupBy(Energy::raw('DATE(created_at)'))->
-        // get();
-        return Energy::select(Energy::raw('DATE(energies.created_at) as date'), Energy::raw('SUM(energies.active_power * (energy_costs.delay/3600)) as sale'))
-                ->join('energy_costs', 'energies.id_kwh', '=', 'energy_costs.id')
-                ->where('energies.id_kwh', '=', 1)
-                ->groupBy(Energy::raw('DATE(created_at)'))
-                ->get();
+        // Mas Wildan
+        // return Energy::select(Energy::raw('DATE(energies.created_at) as date'), Energy::raw('SUM(energies.active_power * (energy_costs.delay/3600)) as sale'))
+        //         ->join('energy_costs', 'energies.id_kwh', '=', 'energy_costs.id')
+        //         ->where('energies.id_kwh', '=', 1)
+        //         ->groupBy(Energy::raw('DATE(created_at)'))
+        //         ->get();
+
+        // Mario 
+        $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
+            ->where('id_kwh', '=', '1')
+            ->groupBy('id_kwh', 'date')
+            ->latest('latest_updated')
+            ->get();
+
+        $length = count($data);
+
+        for ($i = 0; $i < $length - 1; $i++) {
+            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i + 1]->energy_meter;
+        }
+
+        // Hari pertama dihilangkan karena tidak ada hari sebelum hari pertama
+        $data->pop();
+        $data->makeHidden(['latest_updated', 'energy_meter']);
+
+        return $data;
     }
 }

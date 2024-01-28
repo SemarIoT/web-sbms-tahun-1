@@ -272,10 +272,10 @@ class EnergyController extends Controller
 
     public function export_excel()
     {
-        return Excel::download(new EnergyExport, 'energy.xlsx');
+        return Excel::download(new EnergyExport, 'DailyEnergy_IoT.xlsx');
     }
     public function export_excel_csv()
     {
-        return Excel::download(new EnergyExport, 'energy.csv');
+        return Excel::download(new EnergyExport, 'DailyEnergy_IoT.csv');
     }
 }

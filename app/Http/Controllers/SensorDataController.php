@@ -281,20 +281,26 @@ class SensorDataController extends Controller
 
     public function getDailyEnergy()
     {
-        $data = EnergyKwh::where('id_kwh', 1)
-            ->whereIn(DB::raw('(id_kwh, created_at)'), function ($query) {
-                $query->select(DB::raw('id_kwh, MAX(created_at)'))
-                    ->from('energy_kwh')
-                    ->where('id_kwh', 1)
-                    ->groupBy(DB::raw('id_kwh, DATE(created_at)'));
-            })
-            ->orderBy('created_at', 'DESC')
+        $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated')
+            ->where('id_kwh', '=', '1')
+            ->groupBy('id_kwh', 'date')
+            ->latest('latest_updated')
             ->get();
+
+        foreach ($data as $item) {
+            $energy = EnergyKwh::select('total_energy')
+                ->where('id_kwh', 1)
+                ->whereDate('created_at', $item->date)
+                ->latest('created_at')
+                ->first();
+
+            $item->energy_meter = $energy->total_energy;
+        }
 
         $length = count($data);
 
         for ($i = 0; $i < $length - 1; $i++) {
-            $data[$i]->today_energy = $data[$i]->total_energy - $data[$i + 1]->total_energy;
+            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i + 1]->energy_meter;
             $angka_ike = number_format($data[$i]->today_energy * 30 / 1000 / 33.1, 2); // dikali 30 agar memakai standar perbulan | 33,1 luas ruangan IoT
             $data[$i]->angka_ike = $angka_ike;
             switch ($angka_ike) {

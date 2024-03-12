@@ -216,7 +216,7 @@ class SensorDataController extends Controller
 
         return $formattedData;
     }
-   
+
     public function addTotalEnergy(Request $request)
     {
         // Validasi agar data tersimpan setiap 5 menit sekali saja
@@ -281,16 +281,20 @@ class SensorDataController extends Controller
 
     public function getDailyEnergy()
     {
-        $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
-            ->where('id_kwh', '=', '1')
-            ->groupBy('id_kwh', 'date')
-            ->latest('latest_updated')
+        $data = EnergyKwh::where('id_kwh', 1)
+            ->whereIn(DB::raw('(id_kwh, created_at)'), function ($query) {
+                $query->select(DB::raw('id_kwh, MAX(created_at)'))
+                    ->from('energy_kwh')
+                    ->where('id_kwh', 1)
+                    ->groupBy(DB::raw('id_kwh, DATE(created_at)'));
+            })
+            ->orderBy('created_at', 'DESC')
             ->get();
 
         $length = count($data);
 
         for ($i = 0; $i < $length - 1; $i++) {
-            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i + 1]->energy_meter;
+            $data[$i]->today_energy = $data[$i]->total_energy - $data[$i + 1]->total_energy;
             $angka_ike = number_format($data[$i]->today_energy * 30 / 1000 / 33.1, 2); // dikali 30 agar memakai standar perbulan | 33,1 luas ruangan IoT
             $data[$i]->angka_ike = $angka_ike;
             switch ($angka_ike) {
@@ -332,7 +336,7 @@ class SensorDataController extends Controller
     public function getMonthlyEnergy()
     {
         // Versi Mario
-        $data = EnergyKwh::selectRaw('MONTH(created_at) as month, YEAR(created_at) as tahun, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
+        $data = EnergyKwh::selectRaw('MONTH(created_at) as month, YEAR(created_at) as tahun, MAX(created_at) as latest_updated, MAX(total_energy) as total_energy')
             ->where('id_kwh', '=', '1')
             ->groupBy('month', 'tahun')
             ->latest('latest_updated')
@@ -389,9 +393,9 @@ class SensorDataController extends Controller
     public function getIkeDummy()
     {
         $data = IkeDummy::selectRaw('MONTH(created_at) as month, YEAR(created_at) as tahun, MAX(created_at) as latest_updated, MAX(total_energy) as monthly_kwh')
-        ->groupBy('month', 'tahun')
-        ->latest('latest_updated')
-        ->get();
+            ->groupBy('month', 'tahun')
+            ->latest('latest_updated')
+            ->get();
 
         // return $data;
         $length = count($data);
@@ -434,9 +438,9 @@ class SensorDataController extends Controller
     public function getIkeDummyAnnual()
     {
         $data = IkeDummy::selectRaw('YEAR(created_at) as tahun, MAX(created_at) as latest_updated, SUM(total_energy) as annual_kwh')
-        ->groupBy('tahun')
-        ->latest('latest_updated')
-        ->get();
+            ->groupBy('tahun')
+            ->latest('latest_updated')
+            ->get();
 
         // return $data;
         $length = count($data);
@@ -473,6 +477,26 @@ class SensorDataController extends Controller
             $data[$i]->ike = $ike;
             $data[$i]->color = $color;
         }
+        return $data;
+    }
+
+    public function debugFunc()
+    {
+        // Data Statistic Konsumsi Energi from Old to New Date
+        $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
+            ->where('id_kwh', '=', '1')
+            ->groupBy('id_kwh', 'date')
+            ->oldest('latest_updated')
+            ->get();
+
+        $length = count($data);
+
+        for ($i = 1; $i < $length; $i++) {
+            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i - 1]->energy_meter;
+        }
+
+        // $data->makeHidden(['latest_updated', 'energy_meter']);
+
         return $data;
     }
 

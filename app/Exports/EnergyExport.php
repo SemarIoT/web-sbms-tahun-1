@@ -33,17 +33,15 @@ class EnergyExport implements FromCollection, WithHeadings
         $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
             ->where('id_kwh', '=', '1')
             ->groupBy('id_kwh', 'date')
-            ->latest('latest_updated')
+            ->oldest('latest_updated')
             ->get();
 
         $length = count($data);
 
-        for ($i = 0; $i < $length - 1; $i++) {
-            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i + 1]->energy_meter;
+        for ($i = 1; $i < $length; $i++) {
+            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i - 1]->energy_meter;
         }
 
-        // Hari pertama dihilangkan karena tidak ada hari sebelum hari pertama
-        $data->pop();
         $data->makeHidden(['latest_updated', 'energy_meter']);
 
         return $data;

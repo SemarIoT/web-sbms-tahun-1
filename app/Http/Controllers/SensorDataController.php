@@ -16,6 +16,7 @@ use App\Models\LightDimmer;
 use App\Models\DhtExtraData;
 use App\Models\EnergyOutlet;
 use Illuminate\Http\Request;
+use App\Models\EnergyPredict;
 use App\Models\EnergiesForDev;
 use Illuminate\Support\Carbon;
 use App\Models\EnergyPanelMaster;
@@ -504,6 +505,30 @@ class SensorDataController extends Controller
         // $data->makeHidden(['latest_updated', 'energy_meter']);
 
         return $data;
+    }
+
+    public function receiveForecast(Request $request)
+    {
+        // Process the received predictions
+        $predictions = $request->all();
+
+        // Store or update the predictions in the database
+        foreach ($predictions as $prediction) {
+            $existingPrediction = EnergyPredict::where('date', $prediction['date'])->first();
+            if ($existingPrediction) {
+                // Update the existing prediction
+                $existingPrediction->update(['prediction' => $prediction['prediction']]);
+            } else {
+                // Create a new prediction
+                EnergyPredict::create([
+                    'date' => $prediction['date'],
+                    'prediction' => $prediction['prediction']
+                ]);
+            }
+        }
+
+        // Return a response
+        return response()->json(['message' => 'Predictions stored or updated successfully'], 200);
     }
 
     public function getAllFireAlarm()

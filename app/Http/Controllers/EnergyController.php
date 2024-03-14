@@ -77,11 +77,21 @@ class EnergyController extends Controller
 
         // Versi Mario
         // Menggunakan jumlah energy langsung dari kWh meter
-        $data = EnergyKwh::selectRaw('MONTH(created_at) as month, YEAR(created_at) as tahun, MAX(created_at) as latest_updated, MAX(total_energy) as energy_meter')
+        $data = EnergyKwh::selectRaw('MONTH(created_at) as month, YEAR(created_at) as tahun, MAX(created_at) as latest_updated')
             ->where('id_kwh', '=', '1')
             ->groupBy('month', 'tahun')
             ->latest('latest_updated')
             ->get();
+
+        foreach ($data as $item) {
+            $energy = EnergyKwh::select('total_energy')
+                ->where('id_kwh', 1)
+                ->where('created_at', $item->latest_updated)
+                ->latest('created_at')
+                ->first();
+
+            $item->energy_meter = $energy->total_energy;
+        }
 
         $price = EnergyCost::latest()->first()->pokok;
 

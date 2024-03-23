@@ -340,6 +340,38 @@ class SensorDataController extends Controller
         return $data;
     }
 
+    public function getDailyEnergyReversed()
+    {
+        $data = EnergyKwh::selectRaw('DATE(created_at) as date, MAX(created_at) as latest_updated')
+            ->where('id_kwh', '=', '1')
+            ->groupBy('id_kwh', 'date')
+            ->oldest('latest_updated')
+            ->get();
+
+        foreach ($data as $item) {
+            $energy = EnergyKwh::select('total_energy')
+                ->where('id_kwh', 1)
+                ->whereDate('created_at', $item->date)
+                ->latest('created_at')
+                ->first();
+
+            $item->energy_meter = $energy->total_energy;
+        }
+
+        $length = count($data);
+
+        for ($i = 1; $i < $length; $i++) {
+            $data[$i]->today_energy = $data[$i]->energy_meter - $data[$i - 1]->energy_meter;
+        }
+
+        // Menghilangkan data sebelum 01/Jan/24
+        $data->shift();
+        $data->shift();
+        $data->shift();
+
+        return $data;
+    }
+
     public function getMonthlyEnergy()
     {
         // Versi Mario
@@ -526,9 +558,30 @@ class SensorDataController extends Controller
                 ]);
             }
         }
-
         // Return a response
         return response()->json(['message' => 'Predictions stored or updated successfully'], 200);
+    }
+
+    public function getWeeklyPrediction()
+    {
+        $data = EnergyPredict::orderBy('id', 'desc')->take(14)->get();
+
+        // Sort ulang agar id kecil berada di atas
+        $n = count($data);
+        for ($i = 0; $i < $n - 1; $i++) {
+            $minIndex = $i;
+            for ($j = $i + 1; $j < $n; $j++) {
+                if ($data[$j]['id'] < $data[$minIndex]['id']) {
+                    $minIndex = $j;
+                }
+            }
+            if ($minIndex != $i) {
+                $temp = $data[$i];
+                $data[$i] = $data[$minIndex];
+                $data[$minIndex] = $temp;
+            }
+        }
+        return $data;
     }
 
     public function getAllFireAlarm()

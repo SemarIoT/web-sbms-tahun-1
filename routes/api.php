@@ -55,11 +55,13 @@ Route::get('total-energy', [SensorDataController::class, 'getTotalEnergy']);
 Route::post('total-energy', [SensorDataController::class, 'addTotalEnergy']);
 Route::post('debug-energy', [SensorDataController::class, 'addDebugEnergy']);
 Route::get('daily-energy', [SensorDataController::class, 'getDailyEnergy']);
+Route::get('daily-energy-reversed', [SensorDataController::class, 'getDailyEnergyReversed']);
 Route::get('monthly-energy', [SensorDataController::class, 'getMonthlyEnergy']);
 Route::get('ike-dummy', [SensorDataController::class, 'getIkeDummy']);
 Route::get('ike-dummy-annual', [SensorDataController::class, 'getIkeDummyAnnual']);
 Route::get('debug-func', [SensorDataController::class, 'debugFunc']);
 Route::post('receive-forecast', [SensorDataController::class, 'receiveForecast']);
+Route::get('weekly-prediction', [SensorDataController::class, 'getWeeklyPrediction']);
 
 
 //api control energy

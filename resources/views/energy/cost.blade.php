@@ -70,46 +70,62 @@
 <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.stock.min.js"></script>
 <script type="text/javascript" src="{{asset('js/linechartcanvas.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/linechartcanvasjquery.js')}}"></script>
+<script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 
 <script type="text/javascript">
   window.onload = function () {
     var dataPoints = [];
-    var stockChart = new CanvasJS.StockChart("stockChartContainer", {
-      theme: "dark2", //"light1", "dark1", "dark2" "light2",
-      exportEnabled: true,
-      title: {
-        text: "Statistic"
-      },
-      charts: [{
-        axisX: {
-          crosshair: {
-            enabled: true,
-            snapToDataPoint: true
+    var dataPrediction = [];
+
+    var stockChart = new CanvasJS.StockChart("stockChartContainer",
+      {
+        theme: "dark2", //"light1", "dark1", "dark2" "light2",
+        exportEnabled: true,
+        title: {
+          text: "Energy Consumption (kWh)"
+        },
+        charts: [{
+          axisX: {
+            crosshair: {
+              enabled: true,
+              snapToDataPoint: true
+            }
+          },
+          axisY: {
+            prefix: "",
+            crosshair: {
+              enabled: true,
+              snapToDataPoint: true,
+              valueFormatString: "##,###.##"
+            }
+          },
+          toolTip: {
+            shared: true
+          },
+          data: [{
+            type: "area",
+            name: "Energi",
+            yValueFormatString: "##,##0.## KWH",
+            dataPoints: dataPoints
+          }, {
+            type: "line",
+            color: "orange",
+            name: "Forecasting",
+            yValueFormatString: "##,##0.## KWH",
+            dataPoints: dataPrediction
+          }
+          ]
+        }],
+        navigator: {
+          slider: {
 
           }
-        },
-        axisY: {
-          prefix: "",
-          crosshair: {
-            enabled: true,
-            snapToDataPoint: true,
-            valueFormatString: "##,###.##"
-          }
-        },
-        toolTip: {
-          shared: true
-        },
-        data: [{
-          type: "area",
-          name: "Energi",
-          yValueFormatString: "##,##0.## KWH",
-          dataPoints: dataPoints
-        }]
-      }],
-      navigator: {
-        slider: {
-
         }
+      });
+
+    $.getJSON("api/weekly-prediction", function (data) {
+      for (var i = 0; i < data.length; i++) {
+        dataPrediction.push({ x: new Date(data[i].date), y: Number((data[i].prediction) / 1000) });
       }
     });
 
@@ -117,7 +133,7 @@
       for (var i = 0; i < data.length; i++) {
         dataPoints.push({ x: new Date(data[i].date), y: Number((data[i].today_energy) / 1000) });
       }
-      stockChart.render();
+      chart.render();
     });
   }
 </script>

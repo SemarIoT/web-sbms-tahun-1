@@ -1,0 +1,45 @@
+# @host = http://localhost:8000
+@host = https://iotlab-uns.com/smart-bms/public
+
+### Test POST ApiEnergy endpoint - JSON version
+POST {{host}}/api/ApiEnergy
+Content-Type: application/json
+
+{
+    "id_kwh": 1,
+    "frekuensi": 50.0,
+    "arus": 10.5,
+    "tegangan": 220.0,
+    "active_power": 1500.0,
+    "reactive_power": 200.0,
+    "apparent_power": 1520.0
+}
+
+###
+
+### Test POST ApiEnergy endpoint - Form URL Encoded version
+POST {{host}}/api/ApiEnergy
+Content-Type: application/x-www-form-urlencoded
+
+id_kwh=2&frekuensi=50.0&arus=10.5&tegangan=220.0&active_power=1500.0&reactive_power=200.0&apparent_power=1520.0
+
+###
+
+### Test POST total-energy endpoint - JSON version
+POST {{host}}/api/total-energy
+Content-Type: application/json
+
+{
+    "id_kwh": 1,
+    "total_energy": 10
+}
+
+###
+
+### Test POST total-energy endpoint - Form URL Encoded version
+POST {{host}}/api/total-energy
+Content-Type: application/x-www-form-urlencoded
+
+id_kwh=2&total_energy=10
+
+###
